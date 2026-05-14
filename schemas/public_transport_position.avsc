@@ -1,0 +1,21 @@
+{
+  "type": "record",
+  "name": "PublicTransportPosition",
+  "namespace": "dev.project.transport",
+  "fields": [
+    { "name": "direction", "type": "int" },
+    { "name": "speed", "type": "float" },
+    {
+      "name": "timestamp",
+      "type": { "type": "long", "logicalType": "timestamp-millis" }
+    },
+    { "name": "vehicle_id", "type": "int" },
+    { "name": "lat", "type": "double" },
+    { "name": "lon", "type": "double" },
+    { "name": "timetable_offset", "type": "int" },
+    { "name": "doors_open", "type": "boolean" },
+    { "name": "route", "type": "string" },
+    { "name": "line", "type": "string" },
+    { "name": "road_section_id", "type": "int" }
+  ]
+}
