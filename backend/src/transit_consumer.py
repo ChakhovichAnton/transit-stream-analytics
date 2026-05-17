@@ -4,12 +4,16 @@ import signal
 import sys
 import paho.mqtt.client as mqtt
 from confluent_kafka import Producer
+import structlog
 
 from src.core.utils import iso_to_millis
 from src.core.avro import get_avro_payload
 from src.core.database.road_section import get_nearby_road
 from src.core.database.db import get_db
 from src.config import KAFKA_CONFIG, RAW_PUBLIC_TRANSPORT_EVENTS_TOPIC, MQTT_BROKER_HOST, MQTT_BROKER_PORT, MQTT_BROKER_TOPIC
+from src.logger import configure_logging
+
+log = structlog.get_logger(__name__)
 
 FLUSH_TIMEOUT = 10
 MQTT_KEEPALIVE_INTERVAL = 60
@@ -18,12 +22,12 @@ AVRO_SCHEMA_VERSION = "1"
 def delivery_report(err, msg):
     # TODO: increment success and error counters
     if err:
-        print(f"Kafka delivery failed: {err}")
+        log.error(f"Kafka delivery failed: {err}")
     else:
-        print(f"Delivered message to {msg.topic()} [{msg.partition()}] at offset {msg.offset()}")
+        log.info(f"Delivered message to {msg.topic()} [{msg.partition()}] at offset {msg.offset()}")
 
 def on_connect(client, userdata, flags, reason_code, properties):
-    print("Connected:", reason_code)
+    log.info(f"Connected: {reason_code}")
     client.subscribe(MQTT_BROKER_TOPIC)
 
 def on_message(client, userdata, msg):
@@ -78,15 +82,15 @@ def main():
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 
     def shutdown(signum, frame):
-        print("Shutting down")
+        log.info("Shutting down")
         try:
             producer.flush(FLUSH_TIMEOUT)
-        except Exception as e:
-            print("Kafka flush error:", e)
+        except Exception:
+            log.error("Kafka flush error")
         try:
             client.disconnect()
-        except Exception as e:
-            print("MQTT disconnect error:", e)
+        except Exception:
+            log.error("MQTT disconnect error")
 
         sys.exit(0)
 
@@ -103,4 +107,5 @@ def main():
     client.loop_forever()
 
 if __name__ == "__main__":
+    configure_logging()
     main()

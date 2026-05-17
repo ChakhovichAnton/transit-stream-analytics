@@ -3,7 +3,8 @@ import os
 
 ENV_PATH = "./.."
 load_dotenv(f"{ENV_PATH}/.env")
-load_dotenv(f"{ENV_PATH}/.env.local", override=True) 
+load_dotenv(f"{ENV_PATH}/.env.local", override=True)
+ENV = os.getenv("ENV", "development")
 
 OSM_ROAD_GRAPH_LOCATION = os.getenv("OSM_ROAD_GRAPH_LOCATION")
 OSM_CACHE_PATH = os.getenv("OSM_CACHE_PATH")

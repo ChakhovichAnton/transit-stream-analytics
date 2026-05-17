@@ -1,9 +1,13 @@
 from sqlalchemy import text
 import osmnx as ox
 import math
+import structlog
 
+from src.logger import configure_logging
 from src.core.database.db import get_db
 from src.config import OSM_CACHE_PATH, OSM_ROAD_GRAPH_LOCATION
+
+log = structlog.get_logger(__name__)
 
 insert_query = text("""
     INSERT INTO road_section (
@@ -49,31 +53,38 @@ def to_number_or_none_list(values):
 def to_bool_or_none(value):
     return value if isinstance(value, bool) else None
 
+def main():
+    try:
+        db = next(get_db())
+
+        # Load road graph
+        log.info(f"Starting to load road data for {OSM_ROAD_GRAPH_LOCATION}")
+        ox.settings.cache_folder = OSM_CACHE_PATH
+        G = ox.graph_from_place(OSM_ROAD_GRAPH_LOCATION, network_type="drive")
+        edges = ox.graph_to_gdfs(G, nodes=False)
+        log.info("Starting geo data ingestion script")
+
+        rows = []
+        for idx, row in edges.iterrows():
+            rows.append({
+                "osmid": to_list(row.get("osmid")),
+                "highway": to_number_or_none_list(to_list(row.get("highway"))),
+                "lanes": to_number_or_none_list(to_list(row.get("lanes"))),
+                "maxspeed": to_number_or_none_list(to_list(row.get("maxspeed"))),
+                "location_name": to_list(row.get("name"))[0], # Always use the first name
+                "oneway": to_bool_or_none(row.get("oneway")),
+                "reversed": to_bool_or_none(row.get("reversed")),
+                "length": to_number_or_none(row.get("length")),
+                "geom": row.geometry.wkt
+            })
+        log.info(f"Inserting {len(rows)} roads to database")
+
+        db.execute(insert_query, rows)
+        db.commit()
+        log.info(f"{len(rows)} roads inserted succesfully")
+    except Exception:
+        log.exception("Geo data ingestion failed")
+
 if __name__ == "__main__":
-    db = next(get_db())
-
-    # Load road graph
-    print(f"Starting to load road data for {OSM_ROAD_GRAPH_LOCATION}")
-    ox.settings.cache_folder = OSM_CACHE_PATH
-    G = ox.graph_from_place(OSM_ROAD_GRAPH_LOCATION, network_type="drive")
-    edges = ox.graph_to_gdfs(G, nodes=False)
-    print("Starting geo data ingestion script")
-
-    rows = []
-    for idx, row in edges.iterrows():
-        rows.append({
-            "osmid": to_list(row.get("osmid")),
-            "highway": to_number_or_none_list(to_list(row.get("highway"))),
-            "lanes": to_number_or_none_list(to_list(row.get("lanes"))),
-            "maxspeed": to_number_or_none_list(to_list(row.get("maxspeed"))),
-            "location_name": to_list(row.get("name"))[0], # Always use the first name
-            "oneway": to_bool_or_none(row.get("oneway")),
-            "reversed": to_bool_or_none(row.get("reversed")),
-            "length": to_number_or_none(row.get("length")),
-            "geom": row.geometry.wkt
-        })
-    print(f"Inserting {len(rows)} roads to database")
-
-    db.execute(insert_query, rows)
-    db.commit()
-    print(f"{len(rows)} roads inserted succesfully")
+    configure_logging()
+    main()

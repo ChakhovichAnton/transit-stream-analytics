@@ -3,6 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src.api import routes
 from src.config import BACKEND_API_PORT, BACKEND_API_HOST, FRONTEND_URL
+from src.logger import configure_logging
+
+configure_logging()
 
 app = FastAPI()
 
