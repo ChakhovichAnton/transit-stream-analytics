@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from src.crud.transit import latest_transit_data, test
+from src.services.transit import handle_latest_transit_data
 from src.schemas.transit import TransitResponse
 from src.core.database import get_db
 
@@ -12,4 +12,4 @@ async def latest(db: Session = Depends(get_db)):
     """
     Latest transit data
     """
-    return latest_transit_data(db=db)
+    return handle_latest_transit_data(db=db)

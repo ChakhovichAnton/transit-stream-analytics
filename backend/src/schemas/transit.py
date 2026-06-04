@@ -1,5 +1,10 @@
 from datetime import datetime
+from typing import Literal
 from pydantic import BaseModel
+
+class LineStringResponse(BaseModel):
+    type: Literal["LineString"] = "LineString"
+    coordinates: list[list[float]]
 
 class RoadSectionResponse(BaseModel):
     id: int
@@ -11,6 +16,7 @@ class RoadSectionResponse(BaseModel):
     oneway: bool | None = None
     reversed: bool | None = None
     length: float
+    geom: LineStringResponse
 
     model_config = {"from_attributes": True}
 
@@ -32,5 +38,6 @@ class TransitEventResponse(BaseModel):
 
 
 class TransitResponse(BaseModel):
+    type: Literal["TransitEvent"] = "TransitEvent"
     event: TransitEventResponse
     road_section: RoadSectionResponse
