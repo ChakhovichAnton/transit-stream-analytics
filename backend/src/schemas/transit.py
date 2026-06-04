@@ -38,6 +38,6 @@ class TransitEventResponse(BaseModel):
 
 
 class TransitResponse(BaseModel):
-    type: Literal["TransitEvent"] = "TransitEvent"
+    type: Literal["TransitEventWithSectionCoords"] = "TransitEventWithSectionCoords"
     event: TransitEventResponse
     road_section: RoadSectionResponse

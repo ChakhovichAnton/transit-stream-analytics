@@ -12,6 +12,10 @@ def handle_latest_transit_data(db: Session):
             "road_section": {
                 **d["road_section"],
                 "geom": convert_coords(d["road_section"]["geom"])
+            },
+            "event": {
+                **d["event"],
+                "speed": d["event"]["speed"] * 3.6, # Convert from m/s to km/h
             }
         })
     return result
