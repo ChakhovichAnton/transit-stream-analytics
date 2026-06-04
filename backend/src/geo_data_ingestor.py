@@ -4,7 +4,7 @@ import math
 import structlog
 
 from src.logger import configure_logging
-from src.core.database.db import get_db
+from src.core.database import get_db
 from src.config import OSM_CACHE_PATH, OSM_ROAD_GRAPH_LOCATION
 
 log = structlog.get_logger(__name__)
@@ -35,6 +35,11 @@ insert_query = text("""
 """)
 
 def to_list(value):
+    if value is None:
+        return [None]
+    if isinstance(value, float) and math.isnan(value):
+        return [None]
+
     return value if isinstance(value, list) else [value]
 
 def to_number_or_none(value):

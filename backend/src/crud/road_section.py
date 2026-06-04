@@ -1,6 +1,7 @@
 from sqlalchemy import text
+from sqlalchemy.orm import Session
 
-def get_nearby_road(db, lon, lat):
+def get_nearby_road(db: Session, lon: float, lat: float):
     query = text("""
         SELECT *
         FROM road_section

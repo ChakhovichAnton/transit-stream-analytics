@@ -8,8 +8,8 @@ import structlog
 
 from src.core.utils import iso_to_millis
 from src.core.avro import get_avro_payload
-from src.core.database.road_section import get_nearby_road
-from src.core.database.db import get_db
+from src.crud.road_section import get_nearby_road
+from src.core.database import get_db
 from src.config import KAFKA_CONFIG, RAW_PUBLIC_TRANSPORT_EVENTS_TOPIC, MQTT_BROKER_HOST, MQTT_BROKER_PORT, MQTT_BROKER_TOPIC
 from src.logger import configure_logging
 

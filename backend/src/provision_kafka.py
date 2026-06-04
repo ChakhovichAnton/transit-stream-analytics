@@ -18,7 +18,7 @@ def main():
     for topic, f in fs.items():
         try:
             f.result()
-            log.info("Topic {topic} created")
+            log.info(f"Topic {topic} created")
         except Exception as e:
             log.error(f"Failed to create topic {topic}: {e}")
 
