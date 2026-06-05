@@ -52,6 +52,7 @@ services:
       - ./schemas:/spark_stream_app/schemas
       - ./spark_stream_app/spark-defaults.conf:/opt/spark/conf/spark-defaults.conf
       - ./spark_stream_app/log4j2.properties:/opt/spark/conf/log4j2.properties
+      - spark_checkpoints:/checkpoints
   spark-worker:
     image: custom/spark:3.4.0
     pull_policy: never
@@ -70,3 +71,4 @@ volumes:
   postgres_data:
   kafka_data:
   spark_work:
+  spark_checkpoints:

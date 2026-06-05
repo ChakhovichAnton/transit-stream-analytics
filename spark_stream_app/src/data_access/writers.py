@@ -15,6 +15,7 @@ def write_to_postgres(df):
     query = df.writeStream \
         .foreachBatch(write_batch_to_postgres) \
         .outputMode("append") \
+        .option("checkpointLocation", "/checkpoints/transit-aggregator") \
         .start()
 
     return query

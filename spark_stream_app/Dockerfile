@@ -1,6 +1,7 @@
 FROM apache/spark-py:v3.4.0
 
 ARG SPARK_UID=185
+ARG CHECKPOINTS_DIR=/checkpoints
 ARG SPARK_WORKER_DIR=${SPARK_HOME}/work
 ENV SPARK_WORKER_DIR=${SPARK_WORKER_DIR}
 
@@ -20,5 +21,8 @@ RUN mkdir -p ${SPARK_WORKER_DIR} \
 ARG POSTGRESQL_DRIVER_FILE_NAME=postgresql-42.6.0.jar
 ARG SPARK_JARS=${SPARK_HOME}/jars
 RUN curl -L -o ${SPARK_JARS}/${POSTGRESQL_DRIVER_FILE_NAME} https://jdbc.postgresql.org/download/${POSTGRESQL_DRIVER_FILE_NAME}
+
+# Make checkpoints directory
+RUN mkdir -p ${CHECKPOINTS_DIR} && chown -R ${SPARK_UID} ${CHECKPOINTS_DIR}
 
 USER ${SPARK_UID}

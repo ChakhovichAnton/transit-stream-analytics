@@ -4,6 +4,7 @@ def consume_kafka_raw_public_transport_events(spark):
         .option("kafka.bootstrap.servers", "kafka:9092") \
         .option("subscribe", "raw_public_transport_events") \
         .option("includeHeaders", "true") \
-        .load()#.option("startingOffsets", "earliest") \
+        .option("startingOffsets", "earliest") \
+        .load()
     
     return df
