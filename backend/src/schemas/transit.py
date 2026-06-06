@@ -36,8 +36,27 @@ class TransitEventResponse(BaseModel):
 
     model_config = {"from_attributes": True}
 
+class AggregatedTransitEventResponse(BaseModel):
+    id: int
+    road_section_id: int
+    window_start: datetime
+    window_end: datetime
+    avg_speed: float
+    min_speed: float
+    max_speed: float
+    avg_timetable_offset: float
+    min_timetable_offset: float
+    max_timetable_offset: float
+    count: int
+
+    model_config = {"from_attributes": True}
 
 class TransitResponse(BaseModel):
     type: Literal["TransitEventWithSectionCoords"] = "TransitEventWithSectionCoords"
     event: TransitEventResponse
+    road_section: RoadSectionResponse
+
+class AggregatedTransitResponse(BaseModel):
+    type: Literal["AggregatedTransitEventWithSectionCoords"] = "AggregatedTransitEventWithSectionCoords"
+    event: AggregatedTransitEventResponse
     road_section: RoadSectionResponse

@@ -1,10 +1,10 @@
-def consume_kafka_raw_public_transport_events(spark):
-    df = spark.readStream \
-        .format("kafka") \
-        .option("kafka.bootstrap.servers", "kafka:9092") \
-        .option("subscribe", "raw_public_transport_events") \
-        .option("includeHeaders", "true") \
-        .option("startingOffsets", "earliest") \
+from config.constants import KAFKA_CONFIG
+
+def consume_kafka_stream(spark, topic: str):
+    return (
+        spark.readStream
+        .format("kafka")
+        .options(**KAFKA_CONFIG)
+        .option("subscribe", topic)
         .load()
-    
-    return df
+    )

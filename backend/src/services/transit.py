@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from src.utils.coords import convert_coords
-from src.crud.transit import latest_transit_data
+from src.crud.transit import latest_transit_data, latest_aggregated_transit_data
 
 def handle_latest_transit_data(db: Session):
     data = latest_transit_data(db)
@@ -16,6 +16,26 @@ def handle_latest_transit_data(db: Session):
             "event": {
                 **d["event"],
                 "speed": d["event"]["speed"] * 3.6, # Convert from m/s to km/h
+            }
+        })
+    return result
+
+def handle_latest_aggregated_transit_data(db: Session):
+    data = latest_aggregated_transit_data(db)
+    result = []
+    for d in data:
+        result.append({
+            **d,
+            "road_section": {
+                **d["road_section"],
+                "geom": convert_coords(d["road_section"]["geom"])
+            },
+            "event": {
+                **d["event"],
+                # Convert speed from m/s to km/h
+                "avg_speed": d["event"]["avg_speed"] * 3.6,
+                "min_speed": d["event"]["min_speed"] * 3.6,
+                "max_speed": d["event"]["max_speed"] * 3.6,
             }
         })
     return result

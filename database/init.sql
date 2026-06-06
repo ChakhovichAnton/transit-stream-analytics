@@ -31,3 +31,18 @@ CREATE TABLE public_transport_events (
     line TEXT NOT NULL,
     FOREIGN KEY (road_section_id) REFERENCES road_section(id)
 );
+
+CREATE TABLE public_transport_window_events (
+    id SERIAL PRIMARY KEY,
+    road_section_id INTEGER NOT NULL,
+    window_start TIMESTAMPTZ NOT NULL,
+    window_end TIMESTAMPTZ NOT NULL,
+    avg_speed NUMERIC NOT NULL,
+    min_speed NUMERIC NOT NULL,
+    max_speed NUMERIC NOT NULL,
+    avg_timetable_offset NUMERIC NOT NULL,
+    min_timetable_offset NUMERIC NOT NULL,
+    max_timetable_offset NUMERIC NOT NULL,
+    count INTEGER NOT NULL,
+    FOREIGN KEY (road_section_id) REFERENCES road_section(id)
+);

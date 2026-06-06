@@ -16,3 +16,18 @@ def prepare_public_transport_ingestion(df):
     )
 
     return new_df
+
+def prepare_public_transport_aggregated_ingestion(df):
+    new_df = df.select(
+        col("road_section_id").alias("road_section_id"),
+        col("window.start").alias("window_start"),
+        col("window.end").alias("window_end"),
+        col("avg_speed"),
+        col("min_speed"),
+        col("max_speed"),
+        col("avg_timetable_offset"),
+        col("min_timetable_offset"),
+        col("max_timetable_offset"),
+        col("count")
+    )
+    return new_df
