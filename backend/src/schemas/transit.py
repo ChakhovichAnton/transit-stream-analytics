@@ -1,4 +1,5 @@
 from datetime import datetime
+from datetime import date, datetime
 from typing import Literal
 from pydantic import BaseModel
 
@@ -60,3 +61,8 @@ class AggregatedTransitResponse(BaseModel):
     type: Literal["AggregatedTransitEventWithSectionCoords"] = "AggregatedTransitEventWithSectionCoords"
     event: AggregatedTransitEventResponse
     road_section: RoadSectionResponse
+
+class AggregatedTransitDateResponse:
+    type: Literal["AggregatedTransitDate"] = "AggregatedTransitDate"
+    day: date
+    times: list[datetime]
