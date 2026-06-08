@@ -62,7 +62,7 @@ class AggregatedTransitResponse(BaseModel):
     event: AggregatedTransitEventResponse
     road_section: RoadSectionResponse
 
-class AggregatedTransitDateResponse:
+class AggregatedTransitDateResponse(BaseModel):
     type: Literal["AggregatedTransitDate"] = "AggregatedTransitDate"
     day: date
     times: list[datetime]

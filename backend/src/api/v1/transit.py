@@ -35,7 +35,7 @@ async def window_length(db: Session = Depends(get_db)):
     """
     return handle_get_window_length(db=db)
 
-@router.get("/aggregated/window/{window_length}/dates", response_mode=list[AggregatedTransitDateResponse])
+@router.get("/aggregated/window/{window_length}/dates", response_model=list[AggregatedTransitDateResponse])
 async def dates(window_length: int, db: Session = Depends(get_db)):
     """
     Get dates with data for the specified window length given in seconds
