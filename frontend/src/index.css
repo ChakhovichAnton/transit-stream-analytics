@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+@theme {
+  --color-base: #0f172a; /* slate-900 */
+  --color-card: #1d293d; /* slate-800 */
+  --color-border-base: #314158; /* slate-700 */
+  --color-text-base: #fff;
+  --color-button-blue: #155dfc /* blue-600 */
+}
+
+@layer base {
+  button {
+    @apply cursor-pointer;
+  }
+}
+
 .leaflet-popup-content-wrapper {
   background: #0f172a !important; /* slate-900 */
   color: white !important;

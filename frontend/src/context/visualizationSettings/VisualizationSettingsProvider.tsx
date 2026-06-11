@@ -1,8 +1,9 @@
-import { useState, type PropsWithChildren, type FC } from "react";
+import { type PropsWithChildren, useState } from "react";
+
 import { VisualizationSettingsContext } from "./visualizationSettingsContext";
 import type { ColorMode } from "../../types";
 
-export const VisualizationSettingsProvider: FC<PropsWithChildren> = (props) => {
+export const VisualizationSettingsProvider = (props: PropsWithChildren) => {
   const [colorMode, setColorMode] = useState<ColorMode>("SPEED_LIMIT");
 
   return (

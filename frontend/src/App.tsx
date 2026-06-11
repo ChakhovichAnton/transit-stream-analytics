@@ -1,5 +1,6 @@
 import InteractiveMap from "./components/InteractiveMap";
 import TopBar from "./components/TopBar";
+import { TransitDataProvider } from "./context/transitData";
 import { VisualizationSettingsProvider } from "./context/visualizationSettings";
 
 const App = () => {
@@ -7,9 +8,11 @@ const App = () => {
     <div className="w-screen h-screen flex flex-col overflow-hidden">
       <TopBar />
       <div className="flex flex-1 h-full">
-        <VisualizationSettingsProvider>
-          <InteractiveMap />
-        </VisualizationSettingsProvider>
+        <TransitDataProvider>
+          <VisualizationSettingsProvider>
+            <InteractiveMap />
+          </VisualizationSettingsProvider>
+        </TransitDataProvider>
       </div>
     </div>
   );

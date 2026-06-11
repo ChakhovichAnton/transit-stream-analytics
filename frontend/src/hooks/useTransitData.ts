@@ -1,32 +1,33 @@
 import { useState, useEffect } from "react";
-import { isAxiosError } from "axios";
-import type { PageStatus, TransitResponse } from "../types";
-import { getLatestTransitData } from "../services/transitService";
 
-const useTransitData = () => {
-  const [status, setStatus] = useState<PageStatus>("loading");
-  const [transitData, setTransit] = useState<TransitResponse[]>([]);
+import type { AsyncData, AggregatedTransitResponse } from "../types";
+import { getAggregatedTransitData } from "../services/transitService";
+import { AsyncDataHelpers } from "../utils/asyncData";
+
+const useTransitData = (window?: number, date?: Date) => {
+  const [transitData, setTransitData] = useState<
+    AsyncData<AggregatedTransitResponse[]>
+  >({
+    status: "loading",
+  });
 
   useEffect(() => {
     const getTransitData = async () => {
-      setStatus("loading");
+      if (window === undefined || date === undefined) return;
+
+      setTransitData(AsyncDataHelpers.loading());
       try {
-        const transit = await getLatestTransitData();
-        setTransit(transit);
-        setStatus("success");
+        const data = await getAggregatedTransitData(window, date.getTime());
+        setTransitData(AsyncDataHelpers.success(data));
       } catch (e) {
-        if (isAxiosError(e) && e.status === 404) {
-          setStatus("notFound");
-        } else {
-          setStatus("error");
-        }
+        setTransitData(AsyncDataHelpers.error(e));
       }
     };
 
     getTransitData();
-  }, []);
+  }, [window, date]);
 
-  return { status, transitData };
+  return { transitData };
 };
 
 export default useTransitData;
