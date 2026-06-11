@@ -4,7 +4,7 @@ import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import Dialog from "./Dialog";
 import Dots from "./Dots";
 import Loading from "./Loading";
-import { pad2 } from "../utils/format";
+import { formatDateTime, pad2 } from "../utils/format";
 import { DAYS_OF_THE_WEEK, getMonthGrid } from "../utils/calendar";
 import type { AsyncData } from "../types";
 
@@ -78,7 +78,7 @@ const DateTimeSelector = ({
           Selected date and time
         </div>
         <button
-          className="flex justify-between items-center w-full px-3 py-2 bg-base border border-border-base rounded"
+          className="flex justify-between items-center w-full px-3 py-2 bg-base border border-card-border-base rounded"
           onClick={(event) => {
             event.stopPropagation();
             onOpenDialog();
@@ -93,22 +93,16 @@ const DateTimeSelector = ({
               <Dots />
             </div>
           ) : (
-            value.toLocaleString("gb", {
-              year: "numeric",
-              month: "numeric",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })
+            formatDateTime(value)
           )}
           <ChevronDown
-            className={`${disabled ? "text-border-base" : ""}`}
+            className={`${disabled ? "text-disabled-text" : ""}`}
             size={16}
           />
         </button>
       </div>
       <Dialog isOpen={dialogOpen} onClose={onClose} closeDialogButton>
-        <div className="relative min-h-[30vh] h-full w-full max-w-md flex flex-col py-2">
+        <div className="relative min-h-[30vh] h-full w-full max-w-md flex flex-col">
           {timesWithData.status === "error" ? (
             <div className="flex flex-col space-y-3 items-center justify-center">
               <h2 className="text-lg font-medium">Error</h2>
@@ -150,6 +144,19 @@ const DateTimeSelector = ({
                   const isCurrentMonth = day !== null;
                   const dayData = isCurrentMonth && getTimes(day);
 
+                  const today = new Date();
+                  const isToday =
+                    isCurrentMonth &&
+                    viewYear === today.getFullYear() &&
+                    viewMonth === today.getMonth() &&
+                    day === today.getDate();
+
+                  const isSelected =
+                    isCurrentMonth &&
+                    day === date.getDate() &&
+                    viewMonth === date.getMonth() &&
+                    viewYear === date.getFullYear();
+
                   return (
                     <button
                       key={i}
@@ -164,8 +171,8 @@ const DateTimeSelector = ({
                         setDate(newDate);
                       }}
                       className={`relative p-2 h-8 w-8 flex items-center justify-center rounded transition
-                              ${isCurrentMonth && day === new Date().getDate() ? "border" : ""}
-                              ${isCurrentMonth && day === date.getDate() ? "bg-slate-700" : ""}
+                              ${isToday ? "border" : ""}
+                              ${isSelected ? "bg-slate-700" : ""}
                               ${isCurrentMonth ? "text-slate-300 hover:bg-slate-700 hover:text-white cursor-pointer" : "text-slate-700"}`}
                     >
                       {day || ""}
@@ -177,8 +184,23 @@ const DateTimeSelector = ({
                 })}
               </div>
 
+              <div className="flex justify-between text-xs space-x-2 items-center">
+                <div className="flex items-center gap-1">
+                  <div className="bg-red-500 mx-0.5 w-2 h-2 rounded" />
+                  Date with data
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="border w-4 h-4 rounded" />
+                  Today
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-4 h-4 rounded bg-slate-700" />
+                  Selected
+                </div>
+              </div>
+
               {/* Time picker */}
-              <div className="flex gap-2 mt-3">
+              <div className="flex items-center gap-2 mt-3">
                 <select
                   className="flex-1 bg-slate-900 border border-slate-700 p-2 rounded text-white"
                   value={date.getHours()}
@@ -208,7 +230,10 @@ const DateTimeSelector = ({
                       </option>
                     ))}
                 </select>
-
+                <div className="flex flex-col items-center justify-center gap-2">
+                  <div className="w-1 h-1 rounded-full bg-white" />
+                  <div className="w-1 h-1 rounded-full bg-white" />
+                </div>
                 <select
                   className="flex-1 bg-slate-900 border border-slate-700 p-2 rounded text-white"
                   value={date.getMinutes()}
@@ -225,13 +250,13 @@ const DateTimeSelector = ({
                   ))}
                 </select>
               </div>
-              <div className="flex justify-end mt-4 w-full">
+              <div className="flex mt-4 w-full">
                 <button
                   onClick={() => {
                     onChange(date);
                     onClose();
                   }}
-                  className="px-4 py-2 bg-button-blue text-white rounded-lg hover:bg-blue-700"
+                  className="px-4 py-1 bg-button-blue w-full text-white rounded-lg hover:bg-blue-700"
                 >
                   Confirm
                 </button>

@@ -7,6 +7,7 @@ import Select from "./Select";
 import DateTimeSelector from "./DateTimeSelector";
 import { useTransitDataContext } from "../context/transitData";
 import ButtonMenu from "./ButtonMenu";
+import Collapse from "./Collapse";
 
 const MapSidebar = () => {
   const [leftOpen, setLeftOpen] = useState(true);
@@ -27,53 +28,57 @@ const MapSidebar = () => {
       initial={false}
       animate={{ x: leftOpen ? 0 : -288 }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
-      className="absolute flex z-500 h-full bg-slate-900 border-r border-slate-800 w-72"
+      className="absolute flex z-500 h-full bg-slate-900 w-72 border-t border-card-border-base"
     >
-      <div className="relative w-full h-full">
-        <div className="w-full p-3 rounded-xl bg-slate-900 text-white space-y-3">
-          <div className="flex items-start justify-between text-xs">
-            <span className="font-medium">Road Coloring</span>
+      <div className="relative w-full h-full text-white">
+        <Collapse title="Visualization Options">
+          <div className="w-full rounded-xl bg-slate-900 text-white space-y-3">
+            <div className="flex items-start justify-between text-xs">
+              <span className="font-medium">Road Coloring</span>
 
-            <div className="space-y-1">
-              <div className="h-1.5 rounded-full bg-linear-to-r from-red-500 via-yellow-400 to-green-500" />
+              <div className="space-y-1">
+                <div className="h-1.5 rounded-full bg-linear-to-r from-red-500 via-yellow-400 to-green-500" />
 
-              <div className="flex justify-between gap-7 text-[10px] text-slate-400">
-                <span>Slow</span>
-                <span>Medium</span>
-                <span>Fast</span>
+                <div className="flex justify-between gap-7 text-[10px] text-slate-400">
+                  <span>Slow</span>
+                  <span>Medium</span>
+                  <span>Fast</span>
+                </div>
               </div>
             </div>
-          </div>
 
-          <ButtonMenu
-            options={[
-              {
-                onClick: () => setColorMode("SPEED_LIMIT"),
-                selected: colorMode === "SPEED_LIMIT",
-                label: "Speed limit",
-              },
-              {
-                onClick: () => setColorMode("ABSOLUTE"),
-                selected: colorMode === "ABSOLUTE",
-                label: "Absolute",
-              },
-            ]}
-          />
-        </div>
-        <div className="text-white p-4">
-          <h2>Mode Selector</h2>
-          <p>Select date and time</p>
+            <ButtonMenu
+              options={[
+                {
+                  onClick: () => setColorMode("SPEED_LIMIT"),
+                  selected: colorMode === "SPEED_LIMIT",
+                  label: "Speed limit",
+                },
+                {
+                  onClick: () => setColorMode("ABSOLUTE"),
+                  selected: colorMode === "ABSOLUTE",
+                  label: "Absolute",
+                },
+              ]}
+            />
+          </div>
+        </Collapse>
+        <Collapse title="Data">
+          <span className="font-medium text-xs">Select Fetched Data Type</span>
           <ButtonMenu
             options={[
               {
                 onClick: () => setDataDateMode("LATEST"),
                 selected: dataDateMode === "LATEST",
                 label: "Latest",
+                toolTip:
+                  "Use latest available data before time window if no data exists for the time window",
               },
               {
                 onClick: () => setDataDateMode("STRICT"),
                 selected: dataDateMode === "STRICT",
                 label: "Strict",
+                toolTip: "Use only data from the specified time",
               },
             ]}
             disabled={timesWithData.status !== "success"}
@@ -104,7 +109,7 @@ const MapSidebar = () => {
             onChange={setDate}
             timesWithData={timesWithData}
           />
-        </div>
+        </Collapse>
       </div>
       {/* TOGGLE BUTTON */}
       <button

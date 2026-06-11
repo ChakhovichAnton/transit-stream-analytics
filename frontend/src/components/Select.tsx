@@ -50,7 +50,7 @@ const Select = <T extends string | number | boolean>({
       <button
         onClick={() => setOpen(!open)}
         disabled={disabled}
-        className="truncate w-full flex justify-between items-center px-3 py-2 bg-base border border-border-base rounded"
+        className="truncate w-full flex justify-between items-center px-3 py-2 bg-base border border-card-border-base rounded"
       >
         {loading ? (
           <span>
@@ -64,7 +64,7 @@ const Select = <T extends string | number | boolean>({
         )}
 
         <ChevronDown
-          className={`${disabled ? "text-border-base" : ""}`}
+          className={`${disabled ? "text-disabled-text" : ""}`}
           size={16}
         />
       </button>

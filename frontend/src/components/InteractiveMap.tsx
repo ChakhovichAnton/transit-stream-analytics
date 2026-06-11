@@ -13,6 +13,7 @@ import { useVisualizationContext } from "../context/visualizationSettings";
 import SpeedLimitSign from "./SpeedLimit";
 import MapSidebar from "./MapSidebar";
 import { useTransitDataContext } from "../context/transitData";
+import { formatDate, formatTime } from "../utils/format";
 
 const MAP_DEFAULTS = {
   center: [60.1699, 24.9384] satisfies [number, number],
@@ -41,6 +42,44 @@ const InteractiveMap = () => {
         {transitData.status === "success" && transitData.data.length > 0 && (
           <>
             {transitData.data.map((transit) => {
+              const metrics = [
+                {
+                  label: "Average Speed",
+                  value: Math.round(transit.event.avg_speed),
+                  unit: "km/h",
+                },
+                {
+                  label: "Max Speed",
+                  value: Math.round(transit.event.max_speed),
+                  unit: "km/h",
+                },
+                {
+                  label: "Min Speed",
+                  value: Math.round(transit.event.min_speed),
+                  unit: "km/h",
+                },
+                {
+                  label: "Average Timetable Offset",
+                  value: Math.round(transit.event.avg_timetable_offset / 60),
+                  unit: "min",
+                },
+                {
+                  label: "Max Timetable Offset",
+                  value: Math.round(transit.event.max_timetable_offset / 60),
+                  unit: "min",
+                },
+                {
+                  label: "Min Timetable Offset",
+                  value: Math.round(transit.event.min_timetable_offset / 60),
+                  unit: "min",
+                },
+                {
+                  label: "Vehicle Count",
+                  value: transit.event.count,
+                  unit: "vehicles",
+                },
+              ];
+
               return (
                 <Polyline
                   key={transit.type + transit.road_section.id + colorMode}
@@ -53,34 +92,53 @@ const InteractiveMap = () => {
                   weight={5}
                 >
                   <Popup>
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <div className="text-[10px] text-slate-400 uppercase tracking-wide">
-                          Road Segment
+                    <div className="w-54 text-sm text-text-base">
+                      <div className="flex items-start justify-between">
+                        <div className="mb-2">
+                          <h3 className="text-xs mb-0.5 uppercase tracking-wider text-slate-500">
+                            Road Segment
+                          </h3>
+                          <div className="text-xxs">{transit.road_section.location_name}</div>
+                          <div className="text-text-base font-semibold mt-2">
+                            Traffic Overview
+                          </div>
                         </div>
-                        <div className="text-xs text-slate-300">
-                          Live Traffic
-                        </div>
+
+                        <SpeedLimitSign
+                          size={54}
+                          limit={transit.road_section.maxspeed?.[0]}
+                        />
+                      </div>
+                      <div className="mb-4 flex items-center justify-between text-[11px] text-slate-500 bg-slate-800/30 px-2 py-1 rounded-md">
+                        <span>
+                          {formatDate(new Date(transit.event.window_start))}
+                        </span>
+                        <span>
+                          {formatTime(new Date(transit.event.window_start))} -{" "}
+                          {formatTime(new Date(transit.event.window_end))}
+                        </span>
                       </div>
 
-                      <SpeedLimitSign
-                        size={56}
-                        limit={transit.road_section.maxspeed?.[0]}
-                      />
-                    </div>
+                      <div className="space-y-1">
+                        {metrics.map((m, i) => (
+                          <div
+                            key={i}
+                            className="flex items-center justify-between rounded-md px-3 py-1 bg-slate-800/40"
+                          >
+                            <span className="text-xs text-slate-400">
+                              {m.label}
+                            </span>
 
-                    <div className="bg-slate-800 rounded-lg p-2 mb-3">
-                      <div className="flex items-end justify-between gap-4">
-                        <span className="text-xs text-slate-400">
-                          Current Speed
-                        </span>
-
-                        <span className="text-2xl font-extrabold text-white leading-none">
-                          {Math.round(transit.event.avg_speed)}
-                          <span className="text-xs font-medium text-slate-400 ml-1">
-                            km/h
-                          </span>
-                        </span>
+                            <div className="text-right leading-none">
+                              <span className="font-bold text-slate-200 text-lg">
+                                {m.value}
+                              </span>
+                              <span className="text-xs text-slate-500 ml-1">
+                                {m.unit}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </Popup>
