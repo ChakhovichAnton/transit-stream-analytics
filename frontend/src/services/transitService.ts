@@ -4,14 +4,16 @@ import type {
   DateString,
   TimeWithData,
   AggregatedTransitResponse,
+  DataDateMode,
 } from "../types";
 
 export const getAggregatedTransitData = async (
   window: number,
   startTime: number,
+  mode: DataDateMode,
 ) => {
   const res = await api.get(
-    `/api/v1/transit/aggregated/window/${window}/start/${startTime}`,
+    `/api/v1/transit/aggregated/window/${window}/start/${startTime}?mode=${mode.toLowerCase()}`,
   );
   return res.data as AggregatedTransitResponse[];
 };

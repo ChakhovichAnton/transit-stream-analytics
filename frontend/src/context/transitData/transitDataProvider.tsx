@@ -1,6 +1,6 @@
 import { type PropsWithChildren, useEffect, useState, useMemo } from "react";
 
-import type { AsyncData, TimeWithData } from "../../types";
+import type { AsyncData, DataDateMode, TimeWithData } from "../../types";
 import { getDates, getWindowLengths } from "../../services/transitService";
 import useTransitData from "../../hooks/useTransitData";
 import { TransitDataContext } from "./transitDataContext";
@@ -15,7 +15,12 @@ export const TransitDataProvider = (props: PropsWithChildren) => {
     { status: "loading" },
   );
   const [selectedDate, setSelectedDate] = useState<Date>();
-  const { transitData } = useTransitData(selectedWindow, selectedDate);
+  const [dataDateMode, setDataDateMode] = useState<DataDateMode>("LATEST");
+  const { transitData } = useTransitData(
+    dataDateMode,
+    selectedWindow,
+    selectedDate,
+  );
 
   useEffect(() => {
     const getWindows = async () => {
@@ -77,6 +82,8 @@ export const TransitDataProvider = (props: PropsWithChildren) => {
         setDate: setSelectedDate,
         timesWithData: dataTimes,
         transitData,
+        dataDateMode,
+        setDataDateMode,
       }}
     >
       {props.children}

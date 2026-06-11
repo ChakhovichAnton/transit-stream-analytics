@@ -9,7 +9,7 @@
 }
 
 @layer base {
-  button {
+  button:enabled {
     @apply cursor-pointer;
   }
 }

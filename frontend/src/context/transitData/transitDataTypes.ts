@@ -1,4 +1,8 @@
-import type { AggregatedTransitResponse, AsyncData } from "../../types";
+import type {
+  AggregatedTransitResponse,
+  AsyncData,
+  DataDateMode,
+} from "../../types";
 
 export interface TransitDataContextType {
   selectWindow: (windowLength: number) => void;
@@ -8,4 +12,6 @@ export interface TransitDataContextType {
   setDate: (date: Date) => void;
   timesWithData: AsyncData<{ [k: string]: Date[] }>;
   transitData: AsyncData<AggregatedTransitResponse[]>;
+  dataDateMode: DataDateMode;
+  setDataDateMode: (mode: DataDateMode) => void;
 }

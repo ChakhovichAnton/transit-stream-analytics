@@ -8,6 +8,7 @@ export type AsyncData<T> =
   | { status: "error"; error: AppError };
 
 export type ColorMode = "SPEED_LIMIT" | "ABSOLUTE";
+export type DataDateMode = "STRICT" | "LATEST";
 
 export interface LineStringResponse {
   type: "LineString";

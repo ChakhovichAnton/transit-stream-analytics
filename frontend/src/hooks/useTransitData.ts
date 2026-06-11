@@ -1,10 +1,18 @@
 import { useState, useEffect } from "react";
 
-import type { AsyncData, AggregatedTransitResponse } from "../types";
+import type {
+  AsyncData,
+  DataDateMode,
+  AggregatedTransitResponse,
+} from "../types";
 import { getAggregatedTransitData } from "../services/transitService";
 import { AsyncDataHelpers } from "../utils/asyncData";
 
-const useTransitData = (window?: number, date?: Date) => {
+const useTransitData = (
+  dataDateMode: DataDateMode,
+  window?: number,
+  date?: Date,
+) => {
   const [transitData, setTransitData] = useState<
     AsyncData<AggregatedTransitResponse[]>
   >({
@@ -17,7 +25,11 @@ const useTransitData = (window?: number, date?: Date) => {
 
       setTransitData(AsyncDataHelpers.loading());
       try {
-        const data = await getAggregatedTransitData(window, date.getTime());
+        const data = await getAggregatedTransitData(
+          window,
+          date.getTime(),
+          dataDateMode,
+        );
         setTransitData(AsyncDataHelpers.success(data));
       } catch (e) {
         setTransitData(AsyncDataHelpers.error(e));
@@ -25,7 +37,7 @@ const useTransitData = (window?: number, date?: Date) => {
     };
 
     getTransitData();
-  }, [window, date]);
+  }, [window, date, dataDateMode]);
 
   return { transitData };
 };

@@ -2,6 +2,7 @@ from datetime import datetime
 from datetime import date, datetime
 from typing import Literal
 from pydantic import BaseModel
+from enum import Enum
 
 class LineStringResponse(BaseModel):
     type: Literal["LineString"] = "LineString"
@@ -66,3 +67,11 @@ class AggregatedTransitDateResponse(BaseModel):
     type: Literal["AggregatedTransitDate"] = "AggregatedTransitDate"
     day: date
     times: list[datetime]
+
+class TransitDataDateMode(str, Enum):
+    strict = "strict"
+    latest = "latest"
+
+class DateResponseOrdering(str, Enum):
+    day_asc = "day"
+    day_desc = "-day"

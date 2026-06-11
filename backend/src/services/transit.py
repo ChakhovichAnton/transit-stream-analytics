@@ -1,8 +1,16 @@
 from datetime import datetime
 from sqlalchemy.orm import Session
 
+from src.schemas.transit import DateResponseOrdering, TransitDataDateMode
 from src.utils.coords import convert_coords
-from src.crud.transit import aggregated_data_for_date, latest_transit_data, latest_aggregated_transit_data, window_available_dates, window_length
+from src.crud.transit import (
+    aggregated_data_for_date,
+    latest_aggregated_data_for_date,
+    latest_transit_data,
+    latest_aggregated_transit_data,
+    window_available_dates,
+    window_length
+)
 
 def handle_latest_transit_data(db: Session):
     data = latest_transit_data(db)
@@ -45,11 +53,15 @@ def handle_get_window_length(db: Session):
     data = window_length(db)
     return [int(d["window_size_s"].total_seconds()) for d in data]
 
-def handle_available_dates(db: Session, window: int):
-    return window_available_dates(db, window)
+def handle_available_dates(db: Session, window: int, ordering: DateResponseOrdering):
+    return window_available_dates(db, window, ordering)
 
-def handle_aggregated_data_for_date(db: Session, window: int, start_timestamp: datetime):
-    data = aggregated_data_for_date(db, window, start_timestamp)
+def handle_aggregated_data_for_date(db: Session, window: int, start_timestamp: datetime, mode: TransitDataDateMode):
+    if mode == TransitDataDateMode.strict:
+        data = aggregated_data_for_date(db, window, start_timestamp)
+    else:
+        data = latest_aggregated_data_for_date(db, window, start_timestamp)
+
     result = []
     for d in data:
         result.append({
