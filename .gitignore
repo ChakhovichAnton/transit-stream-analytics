@@ -1,4 +1,6 @@
 .env*
+!.env.example
+!.env.local.example
 
 # Python-generated files
 __pycache__/
