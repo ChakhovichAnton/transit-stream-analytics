@@ -67,6 +67,12 @@ services:
       - spark
     volumes:
       - spark_work:${SPARK_WORKER_DIR}
+  prometheus:
+    image: prom/prometheus:v3.13.2
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.local.yml:/etc/prometheus/prometheus.yml
 
 volumes:
   postgres_data:

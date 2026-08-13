@@ -28,6 +28,9 @@ DB_PORT = os.getenv("POSTGRES_PORT")
 DB_NAME = os.getenv("POSTGRES_DB")
 DB_CONNECTION_STRING = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
+# Prometheus
+PROMETHEUS_INGESTION_PORT = int(os.getenv("PROMETHEUS_INGESTION_PORT"))
+
 # Frontend
 FRONTEND_PORT = int(os.getenv("FRONTEND_PORT"))
 FRONTEND_HOST = os.getenv("FRONTEND_HOST")
